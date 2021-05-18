@@ -1,0 +1,40 @@
+#!/bin/bash
+# Skrypt automatyzujacy mierzenie czasu dla N powtorzen
+# Skladnia "usersys 'polecenie' ilosc_powtorzen
+# Output: SREDNI_CZAS_W_USERSPACE SREDNI_CZAS_W_KERNELU SREDNI_CZAS_SUMA
+# Tworzone pliki: user.time, sys.time, total.time
+# Dependencje: bc
+
+user_sum=0
+sys_sum=0
+total_sum=0
+
+# Usun poprzednie pliki
+rm user.time sys.time total.time 2>/dev/null
+
+for i in $(seq 1 $2); do
+	# Tymczasowy output
+	temp_output=$( { time $1 2&1>/dev/null; } |& egrep 'user|sys' | awk '{print $2}'| cut -dm -f2 | sed 's/,/./g;s/s//g')
+	# echo $temp_output
+	
+	# Wrzucanie i kalkulowanie odpowiednich wartosci
+	user=$( echo $temp_output | awk '{print $1}' )
+	sys=$( echo $temp_output | awk '{print $2}' )
+	total=$( echo "scale=4; $user + $sys" | bc -l )
+
+	# Wrzuc wartosci do plikow
+	echo $user >> user.time
+	echo $sys >> sys.time
+	echo $total >> total.time
+
+	# Sumowanie
+	user_sum=$( echo "scale=4; $user_sum + $user" | bc -l ) 
+	sys_sum=$( echo "scale=4; $sys_sum + $sys" | bc -l ) 
+	total_sum=$( echo "scale=4; $total_sum + $total" | bc -l ) 
+done
+
+# Drukowanie rezultatow
+echo "Polecenie \"$1\" wykonane $2 razy"
+echo "User: $user_sum"
+echo "System: $sys_sum"
+echo "Razem: $total_sum"
