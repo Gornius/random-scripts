@@ -23,6 +23,9 @@ kwriteconfig5 --file kglobalshortcutsrc --group kwin --key "Window to Desktop 9"
 # Close window with Meta+W
 kwriteconfig5 --file kglobalshortcutsrc --group kwin --key "Window Close" 'Meta+W	Alt+F4,Alt+F4,Close Window';
 
+# Maximize window
+kwriteconfig5 --file kglobalshortcutsrc --group kwin --key "Window Maximize" 'Meta+PgUp	Meta+F,Meta+PgUp,Maximize Window'
+
 # Change number of desktops and disable
 kwriteconfig5 --file kwinrc --group Desktops --key Number 8;
 kwriteconfig5 --file kwinrc --group Desktops --key Rows 2;
